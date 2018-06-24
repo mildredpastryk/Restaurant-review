@@ -1,12 +1,12 @@
 var CACHE_NAME = 'cache-v1';
 let urlsToCache = [
-  'index.html',
-  'restaurant.html',
+  '/index.html',
+  '/restaurant.html',
   '/css/styles.css',
   '/data/restaurants.json',
-  'js/dbhelper.js',
+  '/js/dbhelper.js',
   '/js/main.js',
-  'js/restaurant_info.js',
+  '/js/restaurant_info.js',
   '/img/1.jpg',
   '/img/2.jpg',
   '/img/3.jpg',
