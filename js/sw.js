@@ -20,11 +20,44 @@ let urlsToCache = [
   '/img/10.jpg',
 ];
 
+// First service worker - Install Event
+//  It's triggered as soon as the worker executes, 
+// and it's only called once per service worker. 
+self.addEventListener('install', e => {
+	console.log('cache-v1 installing…');
 
+	e.waitUntil(
+    	caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
+ 	);
+});
 
-self.addEventListener('install', function(event) {
-  // Perform install steps
+// Activate Event - once sw is ready to control clients
+// and handle functional events 
+self.addEventListener('activate', e => {
+    e.waitUntil(
+    	caches.keys().then(keys => Promise.all(
+      		keys.map(key => {
+        		if (!expectedCaches.includes(key)) {
+          			return caches.delete(key);
+        		}
+      		})
+    	)).then(() => {
+      		console.log('cache-v1 now ready to handle fetches!');
+    	})
+  	);
+});
 
-
-
+// Fetch Event
+// Method: e.respondWith() allows us to provide a response to this fetch
+self.addEventListener('fetch', e => {
+  e.respondWith(
+    caches.match(e.request).then(function(response) {
+        // Cache hit - return response
+        if (response) {
+          return response;
+        }
+        return fetch(e.request);
+      }
+    )
+  );
 });
