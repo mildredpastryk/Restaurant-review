@@ -1,13 +1,13 @@
 var CACHE_NAME = 'cache-v1';
 let urlsToCache = [
   '/',
+  'index.html',
+  'restaurant.html',
   '/css/styles.css',
   '/data/restaurants.json',
   'js/dbhelper.js',
   '/js/main.js',
   'js/restaurant_info.js',
-  'index.html',
-  'restaurant.html',
   '/img/1.jpg',
   '/img/2.jpg',
   '/img/3.jpg',
@@ -24,7 +24,7 @@ let urlsToCache = [
 //  It's triggered as soon as the worker executes, 
 // and it's only called once per service worker. 
 self.addEventListener('install', e => {
-	console.log('cache-v1 installing…');
+	console.log('Yay! Cache-v1 installing…');
 
 	e.waitUntil(
     	caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
@@ -34,30 +34,31 @@ self.addEventListener('install', e => {
 // Activate Event - once sw is ready to control clients
 // and handle functional events 
 self.addEventListener('activate', e => {
+	console.log('Yay! Cache-v1 now ready to handle fetches!');
+    
     e.waitUntil(
-    	caches.keys().then(keys => Promise.all(
-      		keys.map(key => {
-        		if (!expectedCaches.includes(key)) {
-          			return caches.delete(key);
-        		}
-      		})
-    	)).then(() => {
-      		console.log('cache-v1 now ready to handle fetches!');
-    	})
-  	);
+    	// Get all the cache names
+    	caches.keys().then(cacheNames => {
+			return Promise.all(
+				// Get all the items 
+				cacheNames.filter(cacheName => {
+   					return cacheName != CACHE_NAME;
+        		}).map(cacheName => {
+          		// Delete the items
+          			return caches.delete(cacheName);
+        			})
+      		); // end Promise.all()
+    	}) // end caches.keys()
+  	); // end event.waitUntil()
 });
 
 // Fetch Event
 // Method: e.respondWith() allows us to provide a response to this fetch
 self.addEventListener('fetch', e => {
   e.respondWith(
-    caches.match(e.request).then(function(response) {
+    caches.match(e.request).then(response => {
         // Cache hit - return response
-        if (response) {
-          return response;
-        }
-        return fetch(e.request);
-      }
-    )
-  );
+        return response || fetch(e.request);
+        })
+    );
 });
