@@ -1,6 +1,5 @@
 var CACHE_NAME = 'cache-v1';
 let urlsToCache = [
-  '/',
   'index.html',
   'restaurant.html',
   '/css/styles.css',
@@ -17,7 +16,8 @@ let urlsToCache = [
   '/img/7.jpg',
   '/img/8.jpg',
   '/img/9.jpg',
-  '/img/10.jpg',
+  '/img/10.jpg', 
+  '/',
 ];
 
 // First service worker - Install Event
